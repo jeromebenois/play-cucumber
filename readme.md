@@ -16,7 +16,7 @@ This plugin provide a [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) i
 
    You must write your specifications in a [Business Readable, Domain Specific Language](http://martinfowler.com/bliki/BusinessReadableDSL.html). Cucumber supports the [Gherkin](https://github.com/cucumber/cucumber/wiki/Gherkin) syntax.
 
-   You must store your .feature files in the **features** directory and write your Glue code in **test directory**. You can see an example here: [https://github.com/jeromebenois/play-cucumber-sample](https://github.com/jeromebenois/play-cucumber-sample)
+   You must store your **.feature** files in the **features** directory and write your Glue code in **test** directory. You can see an example here: [https://github.com/jeromebenois/play-cucumber-sample](https://github.com/jeromebenois/play-cucumber-sample)
 
 ## Getting Started in Web browser
 
