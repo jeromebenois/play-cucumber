@@ -1,0 +1,17 @@
+#{extends 'Cucumber/main.html' /}
+#{set title:'Cucumber Dashboard' /}
+
+<a href="@{Cucumber.runAll}" class="btn">Run All...</a>
+<hr/>
+#{list items:features, as:'feature'}
+<dl>
+    <dt>
+        <a href="@{Cucumber.showFeature(feature.uri)}">${feature.feature.name}</a>
+        <span class="muted">(${feature.uri})</span>      
+    </dt>
+    #{list items:feature.featureElements, as:'featureElement'}
+    <dd><i class="icon-comment"></i>&nbsp;${featureElement.visualName}</dd>
+    #{/list}
+<dl>
+<br/>
+#{/list}

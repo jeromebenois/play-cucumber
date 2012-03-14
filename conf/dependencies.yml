@@ -1,0 +1,20 @@
+self: play -> cucumber 0.1
+
+require:
+    - play    
+    - info.cukes -> cucumber-java 1.0.0.RC21-SNAPSHOT
+    - info.cukes -> cucumber-junit 1.0.0.RC21-SNAPSHOT
+
+repositories: 
+    - maven-local: 
+        type: iBiblio
+        root: "file:////${user.home}/.m2/repository/"
+        contains: 
+            - info.cukes
+
+
+#    - sonatype-releases: 
+#        type: iBiblio 
+#        root: "https://oss.sonatype.org/content/repositories/releases/" 
+#        contains: 
+#            - info.cukes

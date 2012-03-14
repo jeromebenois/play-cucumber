@@ -1,0 +1,175 @@
+#{extends 'Cucumber/main.html' /}
+#{set title:'Cucumber Feature Execution result' /}
+
+#{set 'moreStyles'}
+<style> 
+    .passed {
+      color: green;
+    }
+    .skipped {
+      color: cyan;
+    }
+    .failed {
+      color: red;
+    }
+    
+    .error {
+      color: red;
+    }
+  </style>
+#{/set}                                                                                                                                                                                     
+
+#{set 'moreScripts'}    
+    <script src="@{'/public/javascripts/ICanHaz.min.js'}"></script>
+
+    <script id="executionResult" type="text/html">
+        {{> tags}}
+        {{> feature}}
+        {{> scenarios}}
+    </script>
+
+    <script id="tags" type="text/html">
+        <p>
+        {{#tags}}            
+            <span class="label label-info">{{name}}</span>
+        {{/tags}}
+        {{^tags}}
+           This feature as no Tags.
+        {{/tags}}
+        </p>            
+    </script>
+    
+    <script id="feature" type="text/html">
+        <h3><a href="@{Cucumber.showFeature(feature.uri)}">Feature: {{name}}</a></h3>
+        <p>{{#formatDescription}} {{description}} {{/formatDescription}}</p>
+    </script>
+    
+    <script id="scenarios" type="text/html">
+        <p>                        
+            {{#elements}}
+                <p>
+                    <ul>
+                        <li><h4>ScenarioOutline: : {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
+                        <ul>
+                        {{#steps}}
+                            <li>
+                                <span class="{{result.status}}"><b>{{ keyword }}</b> {{{highlightStep}}}</span> 
+                                {{#match}}<small>&#35;{{location}}</small>{{/match}}
+                                *{&nbsp;({{result.duration}} ns.)}*
+                                <small><i>&nbsp;{{{durationInMillis}}}</i></small>
+                                {{#hasErrors}}
+                                {{{errorDetail}}
+                                {{/hasErrors}}
+                            </li>
+                        {{/steps}}
+                        </ul>                     
+                    </ul>                    
+                    {{#isScenarioOutline}}
+                    <b>Examples:</b>
+                    {{/isScenarioOutline}}
+                    <hr/>
+                <p>                
+            {{/elements}}
+        </p>        
+    </script>
+    
+    <script type="text/javascript">
+    $(document).ready(function(){
+        var report = ${jsonResult.raw()}[0];
+        var errorIndex=1;
+        report.formatDescription=function() {
+            return function(description, render) {
+                return '<dl><dd>'+render(description).replace(/\n/g,"</dd><dd>")+'</dd></dl>';
+            }
+        };
+        report.isScenarioOutline=function() { return this.type=='scenario_outline'; };         
+        report.hasErrors=function() { return this.result && this.result.error_message; };
+        report.highlightStep=function() { 
+            var res = this.name.replace('>','&gt;</b>').replace('<','<b>&lt;');
+            if(this.match && this.match.arguments){
+                var val = this.match.arguments[0].val;
+                var offset = this.match.arguments[0].offset;
+                res=this.name.substr(0, offset)+'<b>'+val+'</b>';
+                if(this.name.length>(offset+val.length)){
+                    res+=this.name.substr(offset+val.length);
+                }                                  
+            }
+            return res;
+        };      
+        report.errorDetail=function() { 
+            var errorDetail=$('#error'+errorIndex).html();
+            errorIndex++;
+            return errorDetail;
+        };
+        report.totalElapsedTime=function() {
+            if(this.type=='scenario'){
+                var duration = 10;
+                jQuery.each(this.steps, function() {
+                    if(this.result){duration+=this.result.duration;}
+                });
+                // duration is reported in nanos
+                duration = (duration/1000000).toFixed(2);
+                if(!isNaN(duration)){
+	                if(duration>1000){
+	                    duration=(duration/1000).toFixed(1);
+	                    return '<small><i>(in '+duration+' s.)</i></small>';
+	                }else{
+	                    return '<small><i>(in '+duration+' ms.)</i></small>';
+	                }
+                }                
+            }
+            return '';
+        };
+        report.durationInMillis=function() {             
+            if(this.result){                
+                // duration is reported in nanos
+                var duration = (this.result.duration/1000000).toFixed(2);
+                if(!isNaN(duration)){  
+                    return '<small><i>(in '+duration+' ms.)</i></small>';
+                }
+            }
+            return '';
+        };   
+        console.log(report);        
+		$('#result').append(ich.executionResult(report));                
+    })
+	</script> 
+#{/set}
+
+<div id="errors" style="visibility:hidden; display: none;">
+#{list items:errorDetails, as:'error'}
+    <div id="error${error_index}">
+        <br/><span class="error">In ${error.sourceFile} (around line ${error.errorLine}):</span>
+        <p>
+            #{list items:error.sourceCode, as:'line'}
+                #{if line.isInError}
+                <span class="failed">${line.lineNumber} ${line.code.replaceAll("\t","&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").raw()}</span><br/>
+                #{/if}
+                #{else}
+                ${line.lineNumber} ${line.code.replaceAll("\t","&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").raw()}<br/>
+                #{/else}                        
+            #{/list}
+        </p>	            
+    </div>
+#{/list}
+</div>
+
+<div class="row-fluid">
+	<div class="span12">
+	    <a href="@{Cucumber.runFeature(feature.uri)}" class="btn">Run...</a>
+	    <hr/> 
+        <p id="result" class="result"></p>
+        #{if runtime.snippets.size()>0}
+        <div class="alert alert-block">        
+            <a class="close" data-dismiss="alert" href="#"></a>
+	        You can <strong>implement missing steps</strong> with the snippets below:<br/>	            
+	        <pre>
+            #{list items:runtime.snippets, as:'snippet'}
+            ${snippet}
+	        #{/list}
+            </pre>
+        </div>
+        #{/if}
+	</div>
+</div>
+

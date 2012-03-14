@@ -1,0 +1,53 @@
+#{extends 'Cucumber/main.html' /}
+#{set title:'Cucumber Feature Details' /}
+
+<div class="span12">
+		<h2>
+	        <a href="@{Cucumber.runFeature(feature.uri)}">${feature.feature.name}</a>        
+	        <span class="muted">(${feature.uri})</span>
+	        <a href="@{Cucumber.runFeature(feature.uri)}" class="btn">Run...</a>
+	</h2>
+	    
+	#{list items:feature.featureElements, as:'featureElement'}
+	<dl>
+	    <dt><i class="icon-comment"></i>&nbsp;${featureElement.visualName}</dt>
+	    #{list items:featureElement.steps, as:'step'}
+		    <dd>${step.keyword} ${step.name}</dd>	    
+		#{/list}	
+	</dl>
+	#{/list}
+</div>
+
+#{if feature.featureElements}   
+<div class="offset1 span6">    
+    #{list items:feature.featureElements, as:'featureElement'}
+    #{if featureElement instanceof cucumber.runtime.model.CucumberScenarioOutline}
+    <h4>Examples:</h4>
+	<table class="table table-striped">
+	    #{list items:featureElement?.cucumberExamplesList, as:'cucumberExample'}
+		    #{list items:cucumberExample.examples.rows, as:'row'}
+		        #{if row_isFirst}
+    	        <thead>
+	            <tr>	        
+	                #{list items:row.cells, as:'cell'}
+	                <th>${cell}</th>	        
+	                #{/list}
+                </tr>
+	            </thead>
+    	        <tbody>	    
+    		    #{/if}
+    		    #{else}
+		        <tr>	        
+	                #{list items:row.cells, as:'cell'}
+	                <td>${cell}</td>	        
+	                #{/list}
+                </tr>    		    
+    		    #{/else}		    
+		    #{/list}	    
+		#{/list}
+		</tbody>
+	</table>
+	#{/if}
+	#{/list}
+</div>
+#{/if}
