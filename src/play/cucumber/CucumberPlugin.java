@@ -25,12 +25,12 @@ public class CucumberPlugin extends PlayPlugin {
 
 	@Override
 	public void onRoutesLoaded() {
-		if (Play.mode.isDev()) {			
-			Router.addRoute("GET", "/@cukes/run", "Cucumber.runAll");
-			Router.addRoute("GET", "/@cukes/run.cli", "Cucumber.runAllFromCommandLine");			
+		if (Play.mode.isDev()) {
+			Router.addRoute("GET", "/@cukes/run.cli", "Cucumber.runAllFromCommandLine");
+			Router.addRoute("GET", "/@cukes/run", "Cucumber.runAll");					
+			Router.addRoute("GET", "/@cukes/run/{<.*>uri}","Cucumber.runFeature");
+			Router.addRoute("GET", "/@cukes/result/{<.*>uri}","Cucumber.showFeatureExecResult");
 			Router.addRoute("GET", "/@cukes/feature/{<.*>uri}","Cucumber.showFeature");
-			Router.addRoute("GET", "/@cukes/feature/run/{<.*>uri}","Cucumber.runFeature");
-			Router.addRoute("GET", "/@cukes/feature/result/{<.*>uri}","Cucumber.showFeatureExecResult");			
 			Router.addRoute("GET", "/@cukes", "Cucumber.index");
 		}
 	}

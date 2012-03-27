@@ -42,6 +42,7 @@
     <script id="feature" type="text/html">
         <h3><a href="@{Cucumber.showFeature(feature.uri)}">Feature: {{name}}</a></h3>
         <p>{{#formatDescription}} {{description}} {{/formatDescription}}</p>
+        <hr/>
     </script>
     
     <script id="scenarios" type="text/html">
@@ -49,7 +50,15 @@
             {{#elements}}
                 <p>
                     <ul>
-                        <li><h4>ScenarioOutline: : {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
+                        {{#isBackground}}
+                        <li><h4>Background: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
+                        {{/isBackground}}
+                        {{#isScenario}}
+                        <li><h4>Scenario: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
+                        {{/isScenario}}
+                        {{#isScenarioOutline}}
+                        <li><h4>Scenario Outline: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
+                        {{/isScenarioOutline}}
                         <ul>
                         {{#steps}}
                             <li>
@@ -65,10 +74,13 @@
                         </ul>                     
                     </ul>                    
                     {{#isScenarioOutline}}
+                    <hr/>
                     <b>Examples:</b>
                     {{/isScenarioOutline}}
+                    {{#isScenario}}
                     <hr/>
-                <p>                
+                    {{/isScenario}}                    
+                <p>
             {{/elements}}
         </p>        
     </script>
@@ -82,6 +94,8 @@
                 return '<dl><dd>'+render(description).replace(/\n/g,"</dd><dd>")+'</dd></dl>';
             }
         };
+        report.isBackground=function() { return this.type=='background'; };
+        report.isScenario=function() { return this.type=='scenario'; };
         report.isScenarioOutline=function() { return this.type=='scenario_outline'; };         
         report.hasErrors=function() { return this.result && this.result.error_message; };
         report.highlightStep=function() { 

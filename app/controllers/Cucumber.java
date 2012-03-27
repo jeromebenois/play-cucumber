@@ -18,7 +18,7 @@ public class Cucumber extends Controller {
 		render(features);
 	}
 
-	public static void showFeature(String uri) {
+	public static void showFeature(String uri) {		
 		CucumberFeature feature = CucumberService.findFeatureByUri(uri);		
 		render(feature);
 	}

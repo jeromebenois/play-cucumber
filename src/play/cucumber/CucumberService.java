@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,7 @@ import cucumber.formatter.FormatterConverter;
 import cucumber.formatter.JUnitFormatter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.FileResourceLoader;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.model.CucumberFeature;
@@ -33,7 +35,12 @@ public class CucumberService {
 
 	public static List<CucumberFeature> loadFeatures() {
 		FileResourceLoader resourceLoader = new FileResourceLoader();
-		List<CucumberFeature> features = CucumberFeature.load(resourceLoader, asList("features"), emptyList());
+		List<CucumberFeature> features = Collections.emptyList();
+		try{
+			features=CucumberFeature.load(resourceLoader, asList("features"), emptyList());
+		}catch(CucumberException e){
+			//nothing to do when no features found
+		}
 		return features;
 	}
 

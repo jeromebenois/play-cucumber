@@ -1,8 +1,16 @@
 #{extends 'Cucumber/main.html' /}
 #{set title:'Cucumber Dashboard' /}
 
+
+#{if features.size()==0}
+<div class="alert alert-warning">
+    No <b>*.feature</b> files found in <b>features</b> directory!
+</div>
+#{/if}
+#{else}
 <a href="@{Cucumber.runAll}" class="btn">Run All...</a>
 <hr/>
+#{/else}
 #{list items:features, as:'feature'}
 <dl>
     <dt>

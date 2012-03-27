@@ -5,3 +5,4 @@ eclipse
 conf/routes
 conf/application.conf
 dist
+commands.pyc
