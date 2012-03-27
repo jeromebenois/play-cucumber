@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings
+eclipse
+conf/routes
+conf/application.conf
+dist

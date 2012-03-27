@@ -8,7 +8,7 @@
 <a href="@{Cucumber.runAll}" class="btn">Run All...</a>
 <hr/>
 #{list items:runResults, as:'runResult'}
-<div class="alert #{if runResult.passed}alert-success#{/if}#{else}alert-error#{/else}">
+<div class="alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-error#{/else}">
 <dl>
     <dt>
         <a href="@{Cucumber.showFeature(runResult.feature.uri)}">${runResult.feature.feature.name}</a>
