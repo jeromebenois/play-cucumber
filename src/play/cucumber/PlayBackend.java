@@ -17,7 +17,7 @@ public class PlayBackend extends JavaBackend {
 	}
 
 	@Override
-	public void loadGlue(Glue glue, List<String> gluePaths) {
+	public void loadGlue(Glue glue, List<String> gluePaths) {		
 		super.loadGlue(glue, gluePaths);
 		// add 'test' source folder in Application Classloader
 		if (!Play.javaPath.contains("test")) {

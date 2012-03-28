@@ -3,7 +3,7 @@ self: play -> cucumber 0.1
 require:
     - play    
     - info.cukes -> cucumber-java 1.0.0
-    - info.cukes -> cucumber-java 1.0.0
+    - info.cukes -> cucumber-picocontainer 1.0.0
 
 repositories: 
     - sonatype-releases: 

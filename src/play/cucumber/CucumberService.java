@@ -123,7 +123,7 @@ public class CucumberService {
 		cucumberFeature.run(formatter, reporter, runtime);
 		formatter.done();
 		String prettyResult = prettyWriter.toString();
-		// System.out.println(prettyResult);
+		System.out.println(prettyResult);
 		String jsonResult = jsonWriter.toString();
 		formatter.close();
 
@@ -193,6 +193,7 @@ public class CucumberService {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		for (Throwable failure : failures) {
 			ErrorDetail errorDetail = new ErrorDetail();
+			errorDetail.failure=failure;
 			for (StackTraceElement stackTraceElement : failure.getStackTrace()) {
 				String className = stackTraceElement.getClassName();
 				ApplicationClass applicationClass = Play.classes.getApplicationClass(className);
@@ -210,6 +211,7 @@ public class CucumberService {
 		public String sourceFile;
 		public int errorLine;
 		public List<SourceLine> sourceCode;
+		public Throwable failure;
 
 		public void addSourceCode(String javaSource, int errorLine) {
 			this.sourceCode = new ArrayList<SourceLine>();
