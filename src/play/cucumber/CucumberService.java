@@ -66,8 +66,9 @@ public class CucumberService {
 			}
 		}
 		JUnitFormatter jUnitFormatter = createJUnitFormatter();
-		for (CucumberFeature feature : features) {
-			RunResult runResult = runFeature(feature, jUnitFormatter);
+		boolean dryRun = false;
+		for (CucumberFeature feature : features) {			
+			RunResult runResult = runFeature(feature, dryRun, jUnitFormatter);
 			consoleStream.print("~ " + feature.getUri() + " : ");
 			for (int i = 0; i < maxLength - feature.getUri().length(); i++) {
 				consoleStream.print(" ");
@@ -97,16 +98,17 @@ public class CucumberService {
 	public static RunResult runFeature(String uri) {
 		CucumberFeature cucumberFeature = CucumberService.findFeatureByUri(uri);
 		JUnitFormatter jUnitFormatter = createJUnitFormatter();
-		return runFeature(cucumberFeature, jUnitFormatter);
+		boolean dryRun = false;
+		return runFeature(cucumberFeature, dryRun, jUnitFormatter);
 	}
 
 	private final static String CUCUMBER_RESULT_PATH = "test-result/cucumber/";
 
-	private static RunResult runFeature(CucumberFeature cucumberFeature, Formatter...formatters) {
+	private static RunResult runFeature(CucumberFeature cucumberFeature, boolean dryRun, Formatter...formatters) {
 		RuntimeOptions runtimeOptions = new RuntimeOptions();
 
 		// Configure Runtime
-		runtimeOptions.dryRun = false;
+		runtimeOptions.dryRun = dryRun;
 		runtimeOptions.dotCucumber = Play.getFile(CUCUMBER_RESULT_PATH);
 		StringWriter prettyWriter = addPrettyFormatter(runtimeOptions);
 		StringWriter jsonWriter = addJSONFormatter(runtimeOptions);
