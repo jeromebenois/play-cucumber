@@ -1,11 +1,9 @@
 package play.cucumber;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 import play.Play;
-import play.classloading.ApplicationClassloader;
 import cucumber.io.ResourceLoader;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Utils;
@@ -22,8 +20,9 @@ public class PlayBackend extends JavaBackend {
 		// add 'test' source folder in Application Classloader
 		if (!Play.javaPath.contains("test")) {
 			Play.javaPath.add(Play.getVirtualFile("test"));
-			// Force reload Application Classloader
-			Play.classloader = new ApplicationClassloader();
+			// Restart Applications
+			Play.stop();
+			Play.start();
 		}
 		for (Class glueCodeClass : Play.classloader.getAllClasses()) {
 			while (glueCodeClass != Object.class 

@@ -116,7 +116,9 @@ public class CucumberService {
 			runtimeOptions.formatters.add(formatter);
 		}
 		// Exec Feature
-		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		//final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		final ClassLoader classLoader = Play.classloader;
+		Thread.currentThread().setContextClassLoader(classLoader);
 		ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 		final PlayBackend backend = new PlayBackend(resourceLoader);
 		final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
