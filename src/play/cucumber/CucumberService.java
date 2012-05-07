@@ -23,6 +23,7 @@ import play.templates.Template;
 import cucumber.formatter.CucumberPrettyFormatter;
 import cucumber.formatter.FormatterConverter;
 import cucumber.formatter.JUnitFormatter;
+import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ClasspathResourceLoader;
 import cucumber.io.FileResourceLoader;
 import cucumber.runtime.CucumberException;
@@ -106,6 +107,15 @@ public class CucumberService {
 
 	private static RunResult runFeature(CucumberFeature cucumberFeature, boolean dryRun, Formatter...formatters) {
 		RuntimeOptions runtimeOptions = new RuntimeOptions();
+
+		// Remove the progress formater ()because it closes the default output stream)
+		Formatter progressFormatter = null;
+		for (Formatter formatter : runtimeOptions.formatters) {
+			if (formatter instanceof ProgressFormatter) {
+				runtimeOptions.formatters.remove(formatter);
+				break;
+			}
+		}
 
 		// Configure Runtime
 		runtimeOptions.dryRun = dryRun;
