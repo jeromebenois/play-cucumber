@@ -15,16 +15,9 @@ public class PlayBackend extends JavaBackend {
 	}
 
 	@Override
-	public void loadGlue(Glue glue, List<String> gluePaths) {		
+	public void loadGlue(Glue glue, List<String> gluePaths) {
 		super.loadGlue(glue, gluePaths);
-		// add 'test' source folder in Application Classloader
-		if (!Play.javaPath.contains("test")) {
-			Play.javaPath.add(Play.getVirtualFile("test"));
-			// Restart Applications
-			Play.stop();
-			Play.start();
-		}
-		for (Class glueCodeClass : Play.classloader.getAllClasses()) {
+		for (Class<?> glueCodeClass : Play.classloader.getAllClasses()) {
 			while (glueCodeClass != Object.class 
 					&& !glueCodeClass.isInterface() 					
 					&& !Utils.isInstantiable(glueCodeClass)) {
