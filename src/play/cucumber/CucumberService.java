@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.JSONFormatter;
-import gherkin.formatter.PrettyFormatter;
 import gherkin.formatter.Reporter;
 
 import java.io.File;
@@ -21,7 +20,6 @@ import play.classloading.ApplicationClasses.ApplicationClass;
 import play.libs.IO;
 import play.templates.Template;
 import cucumber.formatter.CucumberPrettyFormatter;
-import cucumber.formatter.FormatterConverter;
 import cucumber.formatter.JUnitFormatter;
 import cucumber.formatter.ProgressFormatter;
 import cucumber.io.ClasspathResourceLoader;
@@ -30,7 +28,6 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.snippets.SummaryPrinter;
 
 public class CucumberService {
 
@@ -109,7 +106,6 @@ public class CucumberService {
 		RuntimeOptions runtimeOptions = new RuntimeOptions();
 
 		// Remove the progress formater ()because it closes the default output stream)
-		Formatter progressFormatter = null;
 		for (Formatter formatter : runtimeOptions.formatters) {
 			if (formatter instanceof ProgressFormatter) {
 				runtimeOptions.formatters.remove(formatter);
@@ -126,9 +122,7 @@ public class CucumberService {
 			runtimeOptions.formatters.add(formatter);
 		}
 		// Exec Feature
-		//final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		final ClassLoader classLoader = Play.classloader;
-		Thread.currentThread().setContextClassLoader(classLoader);
 		ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(classLoader);
 		final PlayBackend backend = new PlayBackend(resourceLoader);
 		final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions);
