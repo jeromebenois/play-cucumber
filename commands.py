@@ -79,7 +79,7 @@ def cukes(app, args):
         line = soutint.readline().strip()        
         if line:
             print line
-            if line.find('Listening for HTTP') > -1:
+            if line.find('@cukes') > -1:
                 #soutint.close()
                 break
   
