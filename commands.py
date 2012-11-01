@@ -87,8 +87,8 @@ def cukes(app, args):
     try:
         proxy_handler = urllib2.ProxyHandler({})
         opener = urllib2.build_opener(proxy_handler)
-        print "~ Run Cukes: "+('http://localhost:%s/@cukes/run.cli' % http_port)        
-        result = opener.open('http://localhost:%s/@cukes/run.cli' % http_port)
+        print "~ Run Cukes: "+(protocol + '://localhost:%s/@cukes/run.cli' % http_port)
+        result = opener.open(protocol + '://localhost:%s/@cukes/run.cli' % http_port)
         print result.read()
     except Exception, e:
         print e        
