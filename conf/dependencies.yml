@@ -1,9 +1,9 @@
-self: play -> cucumber 0.1
+self: play -> cucumber 0.2
 
 require:
     - play    
-    - info.cukes -> cucumber-java 1.0.0
-    - info.cukes -> cucumber-picocontainer 1.0.0
+    #- info.cukes -> cucumber-java 1.1.1
+    - info.cukes -> cucumber-picocontainer 1.1.1
 
 repositories: 
     - sonatype-releases: 

@@ -11,7 +11,8 @@ public class CucumberPlugin extends PlayPlugin {
 
     @Override
     public void onLoad() {
-        VirtualFile appRoot = VirtualFile.open(Play.applicationPath);
+        /*
+    	VirtualFile appRoot = VirtualFile.open(Play.applicationPath);
         Play.javaPath.add(appRoot.child("test"));
         for (VirtualFile module : Play.modules.values()) {
             File modulePath = module.getRealFile();
@@ -19,6 +20,7 @@ public class CucumberPlugin extends PlayPlugin {
                 Play.javaPath.add(module.child("test"));
             }
         }
+        */
     }
 
     @Override

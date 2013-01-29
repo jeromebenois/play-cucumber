@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import play.Play;
-import cucumber.io.ResourceLoader;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.Glue;
 import cucumber.runtime.Utils;
 import cucumber.runtime.java.JavaBackend;
@@ -25,7 +25,7 @@ public class PlayBackend extends JavaBackend {
 				glueCodeClass = glueCodeClass.getSuperclass();
 			}			
 			for (Method method : glueCodeClass.getMethods()) {				
-				loadGlue(glue, method);
+				loadGlue(glue, method, glueCodeClass);
 			}				
 		}
 	}
