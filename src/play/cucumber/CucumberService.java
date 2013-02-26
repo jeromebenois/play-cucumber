@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import play.Play;
 import play.classloading.ApplicationClasses.ApplicationClass;
+import play.libs.Files;
 import play.libs.IO;
 import play.templates.Template;
 import cucumber.runtime.CucumberException;
@@ -32,14 +33,14 @@ import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 
 public class CucumberService {
-	
+
 	public static List<CucumberFeature> loadFeatures() {
 		FileResourceLoader resourceLoader = new FileResourceLoader();
 		List<CucumberFeature> features = Collections.emptyList();
-		try{
-			features=CucumberFeature.load(resourceLoader, asList("features"), emptyList());
-		}catch(CucumberException e){
-			//nothing to do when no features found
+		try {
+			features = CucumberFeature.load(resourceLoader, asList("features"), emptyList());
+		} catch (CucumberException e) {
+			// nothing to do when no features found
 		}
 		return features;
 	}
@@ -65,11 +66,10 @@ public class CucumberService {
 				maxLength = feature.getUri().length();
 			}
 		}
-		//Formatter jUnitFormatter = createJUnitFormatter();
 		boolean dryRun = false;
-		for (CucumberFeature feature : features) {			
-			//RunResult runResult = runFeature(feature, dryRun, jUnitFormatter);
-			RunResult runResult = runFeature(feature, dryRun);
+		for (CucumberFeature feature : features) {
+			Formatter jUnitFormatter = createJUnitFormatter(feature);
+			RunResult runResult = runFeature(feature, dryRun, jUnitFormatter);
 			consoleStream.print("~ " + feature.getUri() + " : ");
 			for (int i = 0; i < maxLength - feature.getUri().length(); i++) {
 				consoleStream.print(" ");
@@ -77,33 +77,33 @@ public class CucumberService {
 			if (runResult.passed) {
 				consoleStream.println("  PASSED");
 			} else {
-				if(runResult.snippets.size()>0){
+				if (runResult.snippets.size() > 0) {
 					consoleStream.println("  SKIPPED !  ");
-				}else{
-					consoleStream.println("  FAILED  !  ");	
-				}				
+				} else {
+					consoleStream.println("  FAILED  !  ");
+				}
 			}
 			runResults.add(runResult);
 		}
 		consoleStream.println("~");
 		return runResults;
 	}
-
+	
 	public static RunResult runFeature(String uri) {
 		CucumberFeature cucumberFeature = CucumberService.findFeatureByUri(uri);
-		//Formatter jUnitFormatter = createJUnitFormatter();
+		Formatter jUnitFormatter = createJUnitFormatter(cucumberFeature);
 		boolean dryRun = false;
-		//return runFeature(cucumberFeature, dryRun, jUnitFormatter);
-		return runFeature(cucumberFeature, dryRun);
+		return runFeature(cucumberFeature, dryRun, jUnitFormatter);
 	}
 
 	private final static String CUCUMBER_RESULT_PATH = "test-result/cucumber/";
 
-	private static RunResult runFeature(CucumberFeature cucumberFeature, boolean dryRun, Formatter...formatters) {
-		Properties properties = Play.configuration; 
+	private static RunResult runFeature(CucumberFeature cucumberFeature, boolean dryRun, Formatter... formatters) {
+		Properties properties = Play.configuration;
 		RuntimeOptions runtimeOptions = new RuntimeOptions(properties);
 
-		// Remove the progress formater (because it closes the default output stream)
+		// Remove the progress formater (because it closes the default output
+		// stream)
 		for (Formatter formatter : runtimeOptions.formatters) {
 			if (formatter.getClass().getSimpleName().equals("ProgressFormatter")) {
 				runtimeOptions.formatters.remove(formatter);
@@ -114,11 +114,11 @@ public class CucumberService {
 		// Configure Runtime
 		runtimeOptions.dryRun = dryRun;
 		runtimeOptions.dotCucumber = Play.getFile(CUCUMBER_RESULT_PATH);
-		//StringWriter prettyWriter = null;
-		//prettyWriter = addPrettyFormatter(runtimeOptions);
+		// StringWriter prettyWriter = null;
+		// prettyWriter = addPrettyFormatter(runtimeOptions);
 		addPrettyFormatter(runtimeOptions);
 		StringWriter jsonWriter = addJSONFormatter(runtimeOptions);
-		for(Formatter formatter:formatters){
+		for (Formatter formatter : formatters) {
 			runtimeOptions.formatters.add(formatter);
 		}
 		// Exec Feature
@@ -130,9 +130,9 @@ public class CucumberService {
 		Reporter reporter = runtimeOptions.reporter(classLoader);
 		cucumberFeature.run(formatter, reporter, runtime);
 		formatter.done();
-		//String prettyResult = prettyWriter.toString();
-		//	System.out.println(prettyResult);
-		//}
+		// String prettyResult = prettyWriter.toString();
+		// System.out.println(prettyResult);
+		// }
 		String jsonResult = jsonWriter.toString();
 		formatter.close();
 
@@ -149,37 +149,41 @@ public class CucumberService {
 		String result = template.render(args);
 
 		IO.write(result.getBytes(), targetFile);
-		return new RunResult(cucumberFeature, (errorDetails.size() + runtime.getSnippets().size() == 0)/*, prettyResult*/, errorDetails, runtime.getSnippets());
+		return new RunResult(cucumberFeature, (errorDetails.size() + runtime.getSnippets().size() == 0)/*
+																										 * ,
+																										 * prettyResult
+																										 */, errorDetails, runtime.getSnippets());
 	}
 
 	private static void addPrettyFormatter(RuntimeOptions runtimeOptions) {
-		//StringWriter prettyWriter = new StringWriter();
+		// StringWriter prettyWriter = new StringWriter();
 		Appendable consoleStream = new Appendable() {
 			@Override
 			public Appendable append(CharSequence csq, int start, int end) throws IOException {
 				System.out.append(csq, start, end);
 				return this;
 			}
-			
+
 			@Override
 			public Appendable append(char c) throws IOException {
 				System.out.append(c);
 				return this;
 			}
-			
+
 			@Override
 			public Appendable append(CharSequence csq) throws IOException {
 				System.out.append(csq);
 				return this;
 			}
 		};
-		//CucumberPrettyFormatter prettyFormatter = new CucumberPrettyFormatter(prettyWriter);
-		Formatter prettyFormatter=null;
+		// CucumberPrettyFormatter prettyFormatter = new
+		// CucumberPrettyFormatter(prettyWriter);
+		Formatter prettyFormatter = null;
 		try {
 			Class prettyFormatterClass = Class.forName("cucumber.runtime.formatter.CucumberPrettyFormatter");
 			Constructor<Formatter> constructor = prettyFormatterClass.getDeclaredConstructor(Appendable.class);
 			constructor.setAccessible(true);
-			prettyFormatter = constructor.newInstance(consoleStream);			
+			prettyFormatter = constructor.newInstance(consoleStream);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
@@ -194,48 +198,51 @@ public class CucumberService {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		}		
+		}
 		runtimeOptions.formatters.add(prettyFormatter);
-		//return prettyWriter;		
+		// return prettyWriter;
 	}
-	
 
 	private static StringWriter addJSONFormatter(RuntimeOptions runtimeOptions) {
 		StringWriter jsonWriter = new StringWriter();
-		//JSONFormatter jsonFormatter = new JSONFormatter(jsonWriter);
-		//JSONPrettyFormatter jsonFormatter = new JSONPrettyFormatter(jsonWriter); 
-		Formatter jsonFormatter = new CustomJSONFormatter(jsonWriter);		
+		// JSONFormatter jsonFormatter = new JSONFormatter(jsonWriter);
+		// JSONPrettyFormatter jsonFormatter = new
+		// JSONPrettyFormatter(jsonWriter);
+		Formatter jsonFormatter = new CustomJSONFormatter(jsonWriter);
 		runtimeOptions.formatters.add(jsonFormatter);
 		return jsonWriter;
 	}
-
-	/*
-	private static Formatter createJUnitFormatter() {
-		//Formatter junitFormatter = new JUnitFormatter(Play.getFile(CUCUMBER_RESULT_PATH + "junit-report.xml"));
-		Formatter junitFormatter=null;
-		try {
-			Class junitFormatterClass = Class.forName("cucumber.runtime.formatter.JUnitFormatter");
-			Constructor<Formatter> constructor = junitFormatterClass.getDeclaredConstructor(File.class);
-			constructor.setAccessible(true);
-			junitFormatter = constructor.newInstance(Play.getFile(CUCUMBER_RESULT_PATH + "junit-report.xml"));
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}		
+	
+	private static Formatter createJUnitFormatter(CucumberFeature cucumberFeature) {
+		String reportFileName = escapeSlashAndBackSlash(cucumberFeature.getUri())+"-junit-report.xml";
+		Play.getFile(CUCUMBER_RESULT_PATH).mkdir();
+		Formatter junitFormatter = new CustomJUnitFormatter(Play.getFile(CUCUMBER_RESULT_PATH + reportFileName));
 		return junitFormatter;
 	}
-	*/
+	
+	private static String escapeSlashAndBackSlash(String s){
+		return s.replaceAll("\\\\","_").replaceAll("/","_");
+	}
+
+	/*
+	 * private static Formatter createJUnitFormatter() { //Formatter
+	 * junitFormatter = new JUnitFormatter(Play.getFile(CUCUMBER_RESULT_PATH +
+	 * "junit-report.xml")); Formatter junitFormatter=null; try { Class
+	 * junitFormatterClass =
+	 * Class.forName("cucumber.runtime.formatter.JUnitFormatter");
+	 * Constructor<Formatter> constructor =
+	 * junitFormatterClass.getDeclaredConstructor(File.class);
+	 * constructor.setAccessible(true); junitFormatter =
+	 * constructor.newInstance(Play.getFile(CUCUMBER_RESULT_PATH +
+	 * "junit-report.xml")); } catch (ClassNotFoundException e) {
+	 * e.printStackTrace(); } catch (SecurityException e) { e.printStackTrace();
+	 * } catch (NoSuchMethodException e) { e.printStackTrace(); } catch
+	 * (IllegalArgumentException e) { e.printStackTrace(); } catch
+	 * (InstantiationException e) { e.printStackTrace(); } catch
+	 * (IllegalAccessException e) { e.printStackTrace(); } catch
+	 * (InvocationTargetException e) { e.printStackTrace(); } return
+	 * junitFormatter; }
+	 */
 
 	private static void createDirectory(File dir) {
 		if (!dir.getParentFile().exists()) {
@@ -249,14 +256,18 @@ public class CucumberService {
 	public static class RunResult {
 		CucumberFeature feature;
 		boolean passed;
-		//String prettyResult;
+		// String prettyResult;
 		List<ErrorDetail> errorDetails;
 		HashSet<String> snippets;
 
-		public RunResult(CucumberFeature cucumberFeature, boolean passed, /*String prettyResult,*/ List<ErrorDetail> errorDetails, List<String> snippets) {
+		public RunResult(CucumberFeature cucumberFeature, boolean passed, /*
+																		 * String
+																		 * prettyResult
+																		 * ,
+																		 */List<ErrorDetail> errorDetails, List<String> snippets) {
 			this.feature = cucumberFeature;
 			this.passed = passed;
-			//this.prettyResult = prettyResult;
+			// this.prettyResult = prettyResult;
 			this.errorDetails = errorDetails;
 			this.snippets = new HashSet<String>();
 			this.snippets.addAll(snippets);
@@ -268,7 +279,7 @@ public class CucumberService {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		for (Throwable failure : failures) {
 			ErrorDetail errorDetail = new ErrorDetail();
-			errorDetail.failure=failure;
+			errorDetail.failure = failure;
 			for (StackTraceElement stackTraceElement : failure.getStackTrace()) {
 				String className = stackTraceElement.getClassName();
 				ApplicationClass applicationClass = Play.classes.getApplicationClass(className);
@@ -293,7 +304,7 @@ public class CucumberService {
 			this.errorLine = errorLine;
 			String[] lines = javaSource.split("\n");
 			int from = lines.length - 5 >= 0 && errorLine <= lines.length ? errorLine - 5 : 0;
-			if(from>0){
+			if (from > 0) {
 				int to = errorLine + 5 < lines.length ? errorLine + 5 : lines.length - 1;
 				for (int i = from; i < to; i++) {
 					SourceLine sourceLine = new SourceLine();
