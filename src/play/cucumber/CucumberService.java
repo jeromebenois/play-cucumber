@@ -1,11 +1,19 @@
 package play.cucumber;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import cucumber.runtime.CucumberException;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.ClasspathResourceLoader;
+import cucumber.runtime.io.FileResourceLoader;
+import cucumber.runtime.model.CucumberFeature;
 import gherkin.formatter.Formatter;
-import gherkin.formatter.JSONFormatter;
-import gherkin.formatter.JSONPrettyFormatter;
 import gherkin.formatter.Reporter;
+import gherkin.formatter.model.Tag;
+import play.Logger;
+import play.Play;
+import play.classloading.ApplicationClasses.ApplicationClass;
+import play.libs.IO;
+import play.templates.Template;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,24 +21,11 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import play.Play;
-import play.classloading.ApplicationClasses.ApplicationClass;
-import play.libs.Files;
-import play.libs.IO;
-import play.templates.Template;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.Runtime;
-import cucumber.runtime.RuntimeOptions;
-import cucumber.runtime.io.ClasspathResourceLoader;
-import cucumber.runtime.io.FileResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 public class CucumberService {
 
@@ -38,10 +33,35 @@ public class CucumberService {
 		FileResourceLoader resourceLoader = new FileResourceLoader();
 		List<CucumberFeature> features = Collections.emptyList();
 		try {
-			features = CucumberFeature.load(resourceLoader, asList("features"), emptyList());
+			features = CucumberFeature.load(resourceLoader, Collections.singletonList("features"), emptyList());
 		} catch (CucumberException e) {
-			// nothing to do when no features found
+            Logger.error(e.getMessage());
 		}
+		return features;
+	}
+
+	private static <T> boolean containsAny(List<T> from, List<T> what) {
+		for (T value : from) {
+			if (what.contains(value)) return true;
+		}
+		return false;
+	}
+
+	public static List<CucumberFeature> loadFeatures(final List<String> tags){
+		FileResourceLoader resourceLoader = new FileResourceLoader();
+		List<CucumberFeature> features = Collections.emptyList();
+		try{
+			features = CucumberFeature.load(resourceLoader, Collections.singletonList("features"), emptyList());
+            if (!tags.isEmpty()){
+
+                features = features.stream()
+                        .filter(feature -> containsAny(feature.getFeature().getTags().stream().map(Tag::getName).collect(Collectors.toList()), tags))
+                        .collect(Collectors.toList());
+            }
+		} catch (CucumberException e){
+            Logger.error(e.getMessage());
+		}
+
 		return features;
 	}
 
@@ -54,12 +74,12 @@ public class CucumberService {
 		return null;
 	}
 
-	public static List<RunResult> runAllFeatures(PrintStream consoleStream) {
-		List<CucumberFeature> features = CucumberService.loadFeatures();
+	public static List<RunResult> runAllFeatures(PrintStream consoleStream, List<String> tags) {
+		List<CucumberFeature> features = CucumberService.loadFeatures(tags);
 		consoleStream.println("~");
 		consoleStream.println("~ " + features.size() + " Cucumber tests to run:");
 		consoleStream.println("~");
-		ArrayList<RunResult> runResults = new ArrayList<RunResult>();
+		ArrayList<RunResult> runResults = new ArrayList<>();
 		int maxLength = 0;
 		for (CucumberFeature feature : features) {
 			if (feature.getUri().length() > maxLength) {
@@ -149,6 +169,7 @@ public class CucumberService {
 		String result = template.render(args);
 
 		IO.write(result.getBytes(), targetFile);
+
 		return new RunResult(cucumberFeature, (errorDetails.size() + runtime.getSnippets().size() == 0)/*
 																										 * ,
 																										 * prettyResult
@@ -184,7 +205,7 @@ public class CucumberService {
 			Constructor<Formatter> constructor = prettyFormatterClass.getDeclaredConstructor(Appendable.class);
 			constructor.setAccessible(true);
 			prettyFormatter = constructor.newInstance(consoleStream);
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException | IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -193,8 +214,6 @@ public class CucumberService {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();

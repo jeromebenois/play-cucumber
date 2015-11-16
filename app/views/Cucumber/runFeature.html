@@ -4,17 +4,17 @@
 #{set 'moreStyles'}
 <style> 
     .passed {
-      color: green;
+      color: #3c763d;
     }
     .skipped {
-      color: cyan;
+      color: #337ab7;
     }
     .failed {
-      color: red;
+      color: #a94442;
     }
     
     .error {
-      color: red;
+      color: #a94442;
     }
   </style>
 #{/set}                                                                                                                                                                                     
@@ -54,7 +54,7 @@
                         <li><h4>Background: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
                         {{/isBackground}}
                         {{#isScenario}}
-                        <li><h4>Scenario: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
+                        <li><h4><i class="glyphicon glyphicon-comment"></i> Scenario: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
                         {{/isScenario}}
                         {{#isScenarioOutline}}
                         <li><h4>Scenario Outline: {{ name }} <small>&#35;{{uri}}:{{line}}</small> {{{totalElapsedTime}}}</h4></li>
@@ -168,18 +168,18 @@
                 ${error.failure.printStackTrace(out)}
             ]]>                
             </pre>
-        </p>	            
+        </p>
     </div>
 #{/list}
 </div>
 
 <div class="row-fluid">
-	<div class="span12">
-	    <a href="@{Cucumber.runFeature(feature.uri)}" class="btn">Run...</a>
+	<div class="col-md-12">
+	    <a href="@{Cucumber.runFeature(feature.uri)}" class="btn btn-primary">Run...</a>
 	    <hr/> 
         <p id="result" class="result"></p>
         #{if runtime.snippets.size()>0}
-        <div class="alert alert-block">        
+        <div class="alert alert-block">
             <a class="close" data-dismiss="alert" href="#"></a>
 	        You can <strong>implement missing steps</strong> with the snippets below:<br/>	            
 	        <pre>

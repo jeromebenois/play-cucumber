@@ -6,3 +6,8 @@ conf/routes
 conf/application.conf
 dist
 commands.pyc
+.idea
+*.ipr
+*.iml
+*.iws
+

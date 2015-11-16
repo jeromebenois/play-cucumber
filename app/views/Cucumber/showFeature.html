@@ -1,25 +1,29 @@
 #{extends 'Cucumber/main.html' /}
 #{set title:'Cucumber Feature Details' /}
 
-<div class="span12">
-		<h2>
-	        <a href="@{Cucumber.runFeature(feature.uri)}">${feature.feature.name}</a>        
-	        <span class="muted">(${feature.uri})</span>
-	        <a href="@{Cucumber.runFeature(feature.uri)}" class="btn">Run...</a>
+<div class="col-md-12">
+	<h2>
+		<a href="@{Cucumber.runFeature(feature.uri)}">${feature.feature.name}</a>
+		<span class="muted">(${feature.uri})</span>
+		<a href="@{Cucumber.runFeature(feature.uri)}" class="btn btn-primary">Run...</a>
 	</h2>
-	    
+
+	<ul>
 	#{list items:feature.featureElements, as:'featureElement'}
-	<dl>
-	    <dt><i class="icon-comment"></i>&nbsp;${featureElement.visualName}</dt>
-	    #{list items:featureElement.steps, as:'step'}
-		    <dd>${step.keyword} ${step.name}</dd>	    
-		#{/list}	
-	</dl>
+        <li>
+            <strong><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</strong>
+			<ul>
+				#{list items:featureElement.steps, as:'step'}
+                    <li>${step.keyword} ${step.name}</li>
+				#{/list}
+			</ul>
+        </li>
 	#{/list}
+	</ul>
 </div>
 
 #{if feature.featureElements}   
-<div class="offset1 span6">    
+<div class="col-md-offset-1 col-md-6">
     #{list items:feature.featureElements, as:'featureElement'}
     #{if featureElement instanceof cucumber.runtime.model.CucumberScenarioOutline}
     <h4>Examples:</h4>

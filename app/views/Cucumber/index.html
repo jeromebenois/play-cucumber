@@ -1,25 +1,30 @@
 #{extends 'Cucumber/main.html' /}
 #{set title:'Cucumber Dashboard' /}
 
-
+<div class="col-md-12">
 #{if features.size()==0}
-<div class="alert alert-warning">
-    No <b>*.feature</b> files found in <b>features</b> directory!
-</div>
+    <div class="alert alert-warning">
+        No <b>*.feature</b> files found in <b>features</b> directory!
+    </div>
 #{/if}
 #{else}
-<a href="@{Cucumber.runAll}" class="btn">Run All...</a>
-<hr/>
+    <a href="@{Cucumber.runAll}" class="btn btn-primary" role="button">Run All...</a>
+    <a href="@{Cucumber.showTags}" class="btn btn-primary" role="button">Run by tags...</a>
+    <hr/>
 #{/else}
-#{list items:features, as:'feature'}
-<dl>
-    <dt>
-        <a href="@{Cucumber.showFeature(feature.uri)}">${feature.feature.name}</a>
-        <span class="muted">(${feature.uri})</span>      
-    </dt>
-    #{list items:feature.featureElements, as:'featureElement'}
-    <dd><i class="icon-comment"></i>&nbsp;${featureElement.visualName}</dd>
+
+    <ul class="list-group">
+    #{list items:features, as:'feature'}
+        <li class="features">
+            <a href="@{Cucumber.showFeature(feature.uri)}">${feature.feature.name}</a>
+            <span class="muted">(${feature.uri})</span>
+            <ul>
+                #{list items:feature.featureElements, as:'featureElement'}
+                    <li class="scenarii"><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>
+                #{/list}
+            </ul>
+        </li>
+        <br/>
     #{/list}
-<dl>
-<br/>
-#{/list}
+    </ul>
+</div>

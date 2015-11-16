@@ -1,0 +1,24 @@
+#{extends 'Cucumber/main.html' /}
+#{set title:'Cucumber Run All Results' /}
+
+#{set 'moreStyles'}
+
+#{/set}
+
+<ul class="list-group">
+#{list items:runResults, as:'runResult'}
+    <li class="list-group-item alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
+        <div>
+            <a href="@{Cucumber.showFeature(runResult.feature.uri)}">${runResult.feature.feature.name}</a>
+            <span class="muted">(${runResult.feature.uri})</span>
+        </div>
+        <ul>
+            #{list items:runResult.feature.featureElements, as:'featureElement'}
+                <li><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>
+            #{/list}
+        </ul>
+        <a href="@{Cucumber.showFeatureExecResult(runResult.feature.uri)}" class="btn">More details...</a>
+        <br/>
+    </li>
+#{/list}
+</ul>
