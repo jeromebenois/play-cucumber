@@ -1,27 +1,11 @@
-package play.cucumber;
+package play.cucumber.formatters;
 
+import cucumber.runtime.CucumberException;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
-import gherkin.formatter.model.Background;
-import gherkin.formatter.model.Examples;
-import gherkin.formatter.model.Feature;
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Scenario;
-import gherkin.formatter.model.ScenarioOutline;
-import gherkin.formatter.model.Step;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import gherkin.formatter.model.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,11 +15,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import cucumber.runtime.CucumberException;
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 //Copied from https://raw.github.com/cucumber/cucumber-jvm/master/core/src/main/java/cucumber/runtime/formatter/JUnitFormatter.java
 public class CustomJUnitFormatter implements Formatter, Reporter {
@@ -86,7 +71,12 @@ public class CustomJUnitFormatter implements Formatter, Reporter {
 			testCase.steps.add(step);
 	}
 
-	@Override
+    @Override
+    public void endOfScenarioLifeCycle(Scenario scenario) {
+
+    }
+
+    @Override
 	public void done() {
 		try {
 			// set up a transformer
@@ -149,7 +139,12 @@ public class CustomJUnitFormatter implements Formatter, Reporter {
 		TestCase.examples = examples.getRows().size() - 1;
 	}
 
-	@Override
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+
+    }
+
+    @Override
 	public void match(Match match) {
 	}
 

@@ -3,24 +3,25 @@
 
 #{set 'moreStyles'}
 #{/set}   
+<div class="col-md-12">
+    <a href="@{Cucumber.runAll}" class="btn btn-primary">Run All...</a>
+    <hr/>
 
-<a href="@{Cucumber.runAll}" class="btn btn-primary">Run All...</a>
-<hr/>
-
-<ul class="list-group">
-#{list items:runResults, as:'runResult'}
-    <li class="list-group alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
+    <ul class="list-group">
+    #{list items:runResults, as:'runResult'}
+        <li class="list-group alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
             <div>
-                <a href="@{Cucumber.showFeature(runResult.feature.uri)}">${runResult.feature.feature.name}</a>
-                <span class="muted">(${runResult.feature.uri})</span>
+                <a href="@{Cucumber.showFeature(runResult.feature.path)}">${runResult.feature.feature.name}</a>
+                <span class="muted">(${runResult.feature.path})</span>
             </div>
             <ul>
                 #{list items:runResult.feature.featureElements, as:'featureElement'}
                     <li><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>
                 #{/list}
             </ul>
-        <a href="@{Cucumber.showFeatureExecResult(runResult.feature.uri)}" class="btn">More details...</a>
-        <br/>
-    </li>
-#{/list}
-</ul>
+            <a href="@{Cucumber.showFeatureExecResult(runResult.feature.path)}" class="btn btn-default">More details...</a>
+            <br/>
+        </li>
+    #{/list}
+    </ul>
+</div>

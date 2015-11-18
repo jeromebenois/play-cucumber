@@ -69,7 +69,7 @@ public class Cucumber extends Controller {
         Supplier<TreeSet<Tag>> supplier = () -> new TreeSet<>(byName);
 
         SortedSet<Tag> tags = features.stream()
-                .flatMap(cucumberFeature -> cucumberFeature.getFeature().getTags().stream())
+                .flatMap(cucumberFeature -> cucumberFeature.getGherkinFeature().getTags().stream())
                 .sorted(Comparator.comparing(Tag::getName))
                 .collect(Collectors.toCollection(supplier));
         render(tags);

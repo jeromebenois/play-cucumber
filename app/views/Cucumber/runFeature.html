@@ -40,7 +40,7 @@
     </script>
     
     <script id="feature" type="text/html">
-        <h3><a href="@{Cucumber.showFeature(feature.uri)}">Feature: {{name}}</a></h3>
+        <h3><a href="@{Cucumber.showFeature(feature.path)}">Feature: {{name}}</a></h3>
         <p>{{#formatDescription}} {{description}} {{/formatDescription}}</p>
         <hr/>
     </script>
@@ -175,7 +175,7 @@
 
 <div class="row-fluid">
 	<div class="col-md-12">
-	    <a href="@{Cucumber.runFeature(feature.uri)}" class="btn btn-primary">Run...</a>
+	    <a href="@{Cucumber.runFeature(feature.path)}" class="btn btn-primary">Run...</a>
 	    <hr/> 
         <p id="result" class="result"></p>
         #{if runtime.snippets.size()>0}

@@ -16,8 +16,8 @@
     <ul class="list-group">
     #{list items:features, as:'feature'}
         <li class="features">
-            <a href="@{Cucumber.showFeature(feature.uri)}">${feature.feature.name}</a>
-            <span class="muted">(${feature.uri})</span>
+            <a href="@{Cucumber.showFeature(feature.path)}">${feature.feature.name}</a>
+            <span class="muted">(${feature.path})</span>
             <ul>
                 #{list items:feature.featureElements, as:'featureElement'}
                     <li class="scenarii"><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>

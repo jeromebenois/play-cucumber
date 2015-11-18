@@ -3,9 +3,9 @@
 
 <div class="col-md-12">
 	<h2>
-		<a href="@{Cucumber.runFeature(feature.uri)}">${feature.feature.name}</a>
-		<span class="muted">(${feature.uri})</span>
-		<a href="@{Cucumber.runFeature(feature.uri)}" class="btn btn-primary">Run...</a>
+		<a href="@{Cucumber.runFeature(feature.path)}">${feature.feature.name}</a>
+		<span class="muted">(${feature.path})</span>
+		<a href="@{Cucumber.runFeature(feature.path)}" class="btn btn-primary">Run...</a>
 	</h2>
 
 	<ul>
