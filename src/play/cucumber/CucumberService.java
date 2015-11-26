@@ -73,6 +73,9 @@ public class CucumberService {
 	public static  List<RunResult> runAllFeatures(PrintStream consoleStream, List<String> tags) {
 		List<CucumberFeature> features = CucumberService.loadFeatures(tags);
 		consoleStream.println("~");
+		if (!tags.isEmpty()){
+			consoleStream.println("~ " + tags.size() + " Cucumber tag selected.");
+		}
 		consoleStream.println("~ " + features.size() + " Cucumber tests to run:");
 		consoleStream.println("~");
 		ArrayList<RunResult> runResults = new ArrayList<>();

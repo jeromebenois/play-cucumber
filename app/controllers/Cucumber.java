@@ -59,7 +59,7 @@ public class Cucumber extends Controller {
         long start = System.currentTimeMillis();
         List<RunResult> runResults = CucumberService.runAllFeatures(stream, tags);
         printElapsedTime(start, stream);
-        renderTemplate("Cucumber/runAll.html", runResults);
+        renderTemplate("Cucumber/runAll.html", runResults, tags);
     }
 
     public static void showTags() {

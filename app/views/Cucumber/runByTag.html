@@ -1,24 +1,32 @@
 #{extends 'Cucumber/main.html' /}
-#{set title:'Cucumber Run All Results' /}
+#{set title:'Cucumber Run By Tags Results' /}
 
 #{set 'moreStyles'}
 
 #{/set}
+<div class="col-md-12">
+    <a href="@{Cucumber.runFeaturesByTags(tags)}" class="btn btn-primary">
+        <span class="glyphicon glyphicon-refresh"></span>
+        Rerun Selected Tags...
+    </a>
+    <hr/>
 
-<ul class="list-group">
-#{list items:runResults, as:'runResult'}
-    <li class="list-group-item alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
-        <div>
-            <a href="@{Cucumber.showFeature(runResult.feature.path)}">${runResult.feature.feature.name}</a>
-            <span class="muted">(${runResult.feature.path})</span>
-        </div>
-        <ul>
-            #{list items:runResult.feature.featureElements, as:'featureElement'}
-                <li><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>
-            #{/list}
-        </ul>
-        <a href="@{Cucumber.showFeatureExecResult(runResult.feature.uri)}" class="btn">More details...</a>
-        <br/>
-    </li>
-#{/list}
-</ul>
+    <ul class="list-group">
+    #{list items:runResults, as:'runResult'}
+        <li class="list-group-item alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
+            <div>
+                <a href="@{Cucumber.showFeature(runResult.feature.path)}">${runResult.feature.feature.name}</a>
+                <span class="muted">(${runResult.feature.path})</span>
+            </div>
+            <ul>
+                #{list items:runResult.feature.featureElements, as:'featureElement'}
+                    <li><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>
+                #{/list}
+            </ul>
+
+            <a href="@{Cucumber.showFeatureExecResult(runResult.feature.uri)}" class="btn btn-default">More details...</a>
+            <br/>
+        </li>
+    #{/list}
+    </ul>
+</div>
