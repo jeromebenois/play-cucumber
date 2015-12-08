@@ -1,0 +1,123 @@
+#{extends 'Cucumber/main.html' /}
+#{set title:'Cucumber tags' /}
+
+#{set 'moreStyles'}
+<style>
+    ul.tag-list{
+        list-style: none;
+        padding-left: 0;
+    }
+
+    li.tag{
+        color: #fff;
+        float: left;
+        width: 12.5%;
+        font-size: 12px;
+        height: 100px;
+        padding: 10px;
+        line-height: 1.4;
+        text-align: center;
+        background-color: #5bc0de;
+        border: 1px solid #fff;
+        border-radius: 4px;
+    }
+
+    li.tag:hover{
+        color: #fff;
+        background-color: #31b0d5;
+        border-color: #269abc;
+    }
+
+    li.tag.active, li.tag:active{
+        color: #fff;
+        background-color: #2aabd2;
+        border-color: #28a4c9;
+    }
+
+    span.tag-name{
+        display: block;
+        text-align: center;
+        word-wrap: break-word;
+        font-weight: 100;
+    }
+
+    label.tag-label{
+        width: 100%;
+        height: 100%;
+    }
+
+    input.tag-input{
+        display: none;
+    }
+
+    .tag-list .glyphicon{
+        margin-bottom: 10px;
+        margin-top: 5px;
+        font-size: 24px;
+    }
+
+</style>
+#{/set}
+
+#{set 'moreScripts'}
+<script type="text/javascript">
+    (function() {
+
+        function activeOrNot(listItem){
+            listItem.classList.toggle('active');
+            var input = listItem.querySelector('input.tag-input');
+            input.checked = !input.checked;
+        }
+
+        function isChecked(inputList){
+            for(var i = 0; i < inputList.length; i++){
+                if(inputList[i].checked === true) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function enableSubmitOrNot(){
+            var tags = $('input.tag-input');
+            if(isChecked(tags)){
+                $('#runByTags').removeAttr('disabled');
+            }else {
+                $('#runByTags').attr('disabled', 'disabled');
+            }
+        }
+
+        $('li.tag').click(function(e) {
+            e.preventDefault();
+            activeOrNot(this);
+            enableSubmitOrNot();
+        });
+    })();
+</script>
+#{/set}
+
+
+#{if tags.empty}
+    Ooops! There is no Tags.
+#{/if}
+#{else}
+<form action="@{Cucumber.runFeaturesByTags}" method="POST" class="col-md-9">
+    <h2>
+        Select tags to run features
+        <button class="btn btn-primary" id="runByTags" type="submit" disabled="disabled">Run selected tags...</button>
+    </h2>
+
+    <ul class="tag-list">
+        #{list items:tags, as:'tag'}
+            <li class="tag">
+                <input type="checkbox" name="tags" class="tag-input" autocomplete="off" id="${tag.getName()}" value="${tag.getName()}"/>
+                <label class="tag-label" for="${tag.getName()}">
+                    <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+                    <span class="tag-name">${tag.getName().replace("@", " ").replace("_", " ")}</span>
+                </label>
+            </li>
+
+        #{/list}
+    </ul>
+</form>
+#{/else}

@@ -1,11 +1,8 @@
 package play.cucumber;
 
-import java.io.File;
-
 import play.Play;
 import play.PlayPlugin;
 import play.mvc.Router;
-import play.vfs.VirtualFile;
 
 public class CucumberPlugin extends PlayPlugin {
 
@@ -48,6 +45,8 @@ public class CucumberPlugin extends PlayPlugin {
 			Router.addRoute("GET", "/@cukes/result/{<.*>uri}","Cucumber.showFeatureExecResult");
 			Router.addRoute("GET", "/@cukes/feature/{<.*>uri}","Cucumber.showFeature");
 			Router.addRoute("GET", "/@cukes", "Cucumber.index");
+			Router.addRoute("GET", "/@cukes/tags", "Cucumber.showTags");
+			Router.addRoute("POST", "/@cukes/runByTags", "Cucumber.runFeaturesByTags");
 		}
 	}
 

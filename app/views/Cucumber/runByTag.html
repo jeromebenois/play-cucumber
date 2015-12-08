@@ -1,27 +1,19 @@
 #{extends 'Cucumber/main.html' /}
-#{set title:'Cucumber Run Results' /}
+#{set title:'Cucumber Run By Tags Results' /}
 
 #{set 'moreStyles'}
-#{/set}   
+
+#{/set}
 <div class="col-md-12">
-#{if tags.isEmpty()}
-    <a href="@{Cucumber.runAll}" class="btn btn-primary">Run All...</a>
-#{/if}
-#{else}
-<form action="@{Cucumber.runFeaturesByTags}" method="POST">
-    <button class="btn btn-primary" type="submit">
+    <a href="@{Cucumber.runFeaturesByTags(tags)}" class="btn btn-primary">
         <span class="glyphicon glyphicon-refresh"></span>
         Rerun Selected Tags...
-    </button>
-    #{list items:tags, as:'tag'}
-    <input name="tags" value="${tag}" type="hidden"/>
-    #{/list}
-</form>
-#{/else}
+    </a>
     <hr/>
+
     <ul class="list-group">
     #{list items:runResults, as:'runResult'}
-        <li class="list-group alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
+        <li class="list-group-item alert #{if runResult.passed}alert-success#{/if}#{elseif runResult.snippets.size()>0}alert-warning#{/elseif}#{else}alert-danger#{/else}">
             <div>
                 <a href="@{Cucumber.showFeature(runResult.feature.path)}">${runResult.feature.feature.name}</a>
                 <span class="muted">(${runResult.feature.path})</span>
@@ -31,7 +23,8 @@
                     <li><i class="glyphicon glyphicon-comment"></i>&nbsp;${featureElement.visualName}</li>
                 #{/list}
             </ul>
-            <a href="@{Cucumber.showFeatureExecResult(runResult.feature.path)}" class="btn btn-default">More details...</a>
+
+            <a href="@{Cucumber.showFeatureExecResult(runResult.feature.uri)}" class="btn btn-default">More details...</a>
             <br/>
         </li>
     #{/list}

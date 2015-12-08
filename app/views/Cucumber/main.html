@@ -1,48 +1,67 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>#{get 'title' /}</title>
-        <meta charset="${_response_encoding}">
-        <link rel="stylesheet" href="@{'/public/stylesheets/bootstrap.css'}">
-        <style type="text/css">
-	      body {
-	        padding-top: 60px;
-	        padding-bottom: 40px;
-	      }
-	      .sidebar-nav {
-	        padding: 9px 0;
-	      }
-	    </style>
-        #{get 'moreStyles' /}
-    </head>
-    <body>
-        <div class="navbar navbar-fixed-top">
-      		<div class="navbar-inner">
-        		<div class="container-fluid">          			          			
-          			<a class="brand" href="@{Cucumber.index}">Cucumber Runner</a>
-      				<div class="nav-collapse">
-        				<ul class="nav">
-          					<li class="active"><a href="@{Cucumber.index}"><i class="icon-home icon-white"></i> Home </a></li>
-          					*{
-			              	<li><a href="#about">About</a></li>
-			              	<li><a href="#contact">Contact</a></li>
-			              	}*
-        				</ul>        				
-      				</div>      			
-        		</div>
-      		</div>
-		</div>
-		
-        <div class="container-fluid">
-      		<div class="row-fluid">          
-                #{doLayout /}	            
-          	</div>      
-      		<hr>
-      		<footer></footer>
-    	</div>
-	        	    	
-    	*{Placed at the end of the document so the pages load faster}*    	
-    	<script src="@{'/public/javascripts/jquery-1.7.1.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>        
-        #{get 'moreScripts' /}
-    </body>
+<head>
+    <title>#{get 'title' /}</title>
+    <meta charset="${_response_encoding}">
+    <link rel="stylesheet" href="@{'/public/bootstrap/3.3.5/css/bootstrap.min.css'}">
+    <link rel="stylesheet" href="@{'/public/bootstrap/3.3.5/css/bootstrap-theme.min.css'}">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .muted{
+            color: #999999;
+        }
+        li a, li span{
+            font-weight: bold;
+        }
+        li{
+            list-style: none;
+        }
+        .alert a{
+            color: inherit;
+        }
+    </style>
+#{get 'moreStyles' /}
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@{Cucumber.index}">Cucumber Runner</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="@{Cucumber.index}"><i class="glyphicon glyphicon-home">Home</i></a></li>
+            *{
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            }*
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+    #{doLayout /}
+    </div>
+    <hr>
+    <footer></footer>
+</div>
+
+*{Placed at the end of the document so the pages load faster}*
+<script src="@{'/public/javascripts/jquery-1.11.3.min.js'}" type="text/javascript"
+        charset="${_response_encoding}"></script>
+<script src="@{'/public/bootstrap/3.3.5/js/bootstrap.min.js'}"></script>
+#{get 'moreScripts' /}
+</body>
 </html>
